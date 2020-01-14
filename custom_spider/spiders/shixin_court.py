@@ -37,7 +37,7 @@ class ShixinCourtSpider(scrapy.Spider):
         "SCHEDULER_QUEUE_CLASS": "scrapy_redis.queue.SpiderPriorityQueue",
         "SCHEDULER_PERSIST": True,
 
-        # 大量请求验证码图片出现302，请求解析PDF也会出现302
+        # 大量请求验证码图片出现302
         "HTTPERROR_ALLOWED_CODES": [302],
         "RETRY_ENABLED": True,
         "RETRY_TIMES": '9',
