@@ -154,15 +154,22 @@ class XzgkCourtSpider(scrapy.Spider):
         keyword = response.meta.get('keyword')
         form_data = response.meta.get('form_data')
         proxy = response.meta.get('proxy')
-        # 验证码识别错误
+        # 验证码识别错误--更换新IP--更换验证码--更换搜索关键词(失败的词重新放回redis)
         if str(response.text) == 'error验证码校验失败，重新刷验证码':
-            logger.info('验证码识别错误--搜索关键词放回redis--重新请求验证码')
-            self.redis_keyword.lpush(self.reids_name, keyword)
+            logger.info('验证码识别错误或者翻页过多导致失效问题--搜索关键词放回redis--重新请求验证码')
+            self.redis_keyword.sadd(self.name + ':error_keyword', keyword)
             uuid = self.get_uuid()
             img_url = 'http://zxgk.court.gov.cn/xgl/captchaXgl.do?captchaId={}&random={}'.format(uuid, random.random())
+            # 更换搜索关键词
+            keyword = self.redis_keyword.rpop(self.reids_name)
+            if not keyword:
+                return None
+            new_keyword = keyword.decode()
+            # 更换新IP
+            new_proxy = self.get_random_ip(img_url)
             yield scrapy.Request(
                 url=img_url,
-                meta={'uuid': uuid, 'keyword': keyword},
+                meta={'uuid': uuid, 'keyword': new_keyword, 'proxy': new_proxy},
                 dont_filter=True,
             )
         else:
