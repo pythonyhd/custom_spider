@@ -154,10 +154,10 @@ class ShixinCourtSpider(scrapy.Spider):
             if not totalSize:
                 return None
             if int(totalSize[0]) == 0:
-                logger.info(f"该搜索词没有搜索结果--{keyword}--添加到布隆过滤器")
                 if self.bloomfilter_client.is_exist(keyword):
                     logger.info(f"{keyword}--- 没有搜索结果并且被过滤了")
                 else:
+                    logger.info(f"该搜索词没有搜索结果--{keyword}--添加到布隆过滤器")
                     self.bloomfilter_client.add(keyword)
             else:
                 # 列表数据解析
