@@ -103,7 +103,7 @@ class ShixinCourtSpider(scrapy.Spider):
         uuid = response.meta.get('uuid')
         # 解析验证码
         code = json.loads(response.text).get('code')
-        # 获取验证码成功开始请求列表页
+        # 获取验证码成功--开始请求列表页第一页--第一页不生成dupefilter--用来更新
         if code:
             headers = {"Referer": "http://zxgk.court.gov.cn/xgl/"}
             form_data = {
@@ -120,6 +120,7 @@ class ShixinCourtSpider(scrapy.Spider):
                 headers=headers,
                 callback=self.parse_index,
                 meta={'keyword': keyword, 'uuid': uuid, 'code': code, 'form_data': form_data},
+                dont_filter=True,
                 priority=3,
             )
         else:
