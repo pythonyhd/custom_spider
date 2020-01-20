@@ -8,6 +8,8 @@ import jsonpath
 import scrapy
 import logging
 
+from custom_spider.config import xzcf_custom_settings
+
 logger = logging.getLogger(__name__)
 
 
@@ -15,24 +17,7 @@ class CfwsSamrSpider(scrapy.Spider):
     name = 'cfws_samr'
     allowed_domains = ['cfws.samr.gov.cn']
 
-    custom_settings = {
-        "DOWNLOADER_MIDDLEWARES": {
-            'custom_spider.middlewares.RandomUserAgentMiddleware': 120,
-            'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': None,  # 禁用默认的代理
-            'custom_spider.middlewares.RandomProxyMiddlerware': 140,
-            # 'custom_spider.middlewares.LocalRetryMiddlerware': 160,
-        },
-        # "ITEM_PIPELINES": {
-            # 'custom_spider.pipelines.CustomPipeline': 300,
-            # 'custom_spider.pipelines.MongodbIndexPipeline': 320,
-            # 'custom_spider.pipelines.MysqlTwistedPipeline': 340,
-        # },
-        "REDIRECT_ENABLED": False,
-        "RETRY_ENABLED": True,
-        "RETRY_TIMES": '9',
-        "DOWNLOAD_TIMEOUT": '25',
-        # "DOWNLOAD_DELAY": '0.05',
-    }
+    custom_settings = xzcf_custom_settings
     search_url = 'http://cfws.samr.gov.cn/queryDoc'  # 列表搜索链接
     index_url = 'http://cfws.samr.gov.cn/getDoc'  # 详情页url
     ciphertext_path = os.path.dirname(os.path.dirname(__file__)) + r'/templates/samr_js.js'

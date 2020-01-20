@@ -10,6 +10,7 @@ import scrapy
 import logging
 
 from custom_spider import settings
+from custom_spider.config import shixin_custom_settings
 from custom_spider.utils.redis_bloomfilter import BloomFilter
 
 logger = logging.getLogger(__name__)
@@ -19,31 +20,7 @@ class ShixinCourtSpider(scrapy.Spider):
     name = 'shixin_court'
     allowed_domains = ['zxgk.court.gov.cn']
 
-    custom_settings = {
-        'DOWNLOADER_MIDDLEWARES': {
-            'custom_spider.middlewares.RandomUserAgentMiddleware': 120,
-            'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': None,  # 禁用默认的代理
-            'custom_spider.middlewares.RandomProxyMiddlerware': 140,
-            'custom_spider.middlewares.LocalRetryMiddlerware': 160,
-        },
-        "ITEM_PIPELINES": {
-            'custom_spider.pipelines.CustomSpiderPipeline': 300,
-            'custom_spider.pipelines.MongodbIndexPipeline': 320,
-            # 'custom_spider.pipelines.MysqlTwistedPipeline': 340,
-        },
-
-        "SCHEDULER": "scrapy_redis.scheduler.Scheduler",
-        "DUPEFILTER_CLASS": "scrapy_redis.dupefilter.RFPDupeFilter",
-        "SCHEDULER_QUEUE_CLASS": "scrapy_redis.queue.SpiderPriorityQueue",
-        "SCHEDULER_PERSIST": True,
-
-        # 大量请求验证码图片出现302
-        "HTTPERROR_ALLOWED_CODES": [302],
-        "RETRY_ENABLED": True,
-        "RETRY_TIMES": '9',
-        "DOWNLOAD_TIMEOUT": '25',
-        # "DOWNLOAD_DELAY": '1',
-    }
+    custom_settings = shixin_custom_settings
     # 列表搜索链接
     search_url = 'http://zxgk.court.gov.cn/shixin/searchSX.do'
 

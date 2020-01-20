@@ -16,6 +16,7 @@ from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LAParams, LTTextBox
 
 from custom_spider import settings
+from custom_spider.config import xzgxf_custom_settings
 from custom_spider.utils.redis_bloomfilter import BloomFilter
 
 logger = logging.getLogger(__name__)
@@ -26,37 +27,7 @@ class XzgkCourtSpider(scrapy.Spider):
     allowed_domains = ['zxgk.court.gov.cn']
     start_urls = ['http://zxgk.court.gov.cn/']
 
-    custom_settings = {
-        'DEFAULT_REQUEST_HEADERS': {
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-            "Host": "zxgk.court.gov.cn",
-            "Origin": "http://zxgk.court.gov.cn",
-            "X-Requested-With": "XMLHttpRequest",
-        },
-        'DOWNLOADER_MIDDLEWARES': {
-            'custom_spider.middlewares.RandomUserAgentMiddleware': 120,
-            'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': None,  # 禁用默认的代理
-            # 'custom_spider.middlewares.CloudProxyMiddleware': 140,  # 代理必须从头到尾是一个
-            # 'custom_spider.middlewares.LocalRetryMiddlerware': 160,
-        },
-        "ITEM_PIPELINES": {
-            'custom_spider.pipelines.CustomSpiderPipeline': 300,
-            'custom_spider.pipelines.MongodbIndexPipeline': 320,
-            # 'custom_spider.pipelines.MysqlTwistedPipeline': 340,
-        },
-
-        "SCHEDULER": "scrapy_redis.scheduler.Scheduler",
-        "DUPEFILTER_CLASS": "scrapy_redis.dupefilter.RFPDupeFilter",
-        "SCHEDULER_QUEUE_CLASS": "scrapy_redis.queue.SpiderPriorityQueue",
-        "SCHEDULER_PERSIST": True,
-
-        # 大量请求验证码图片出现302，请求解析PDF也会出现302
-        "HTTPERROR_ALLOWED_CODES": [302],
-        "RETRY_ENABLED": True,
-        "RETRY_TIMES": '9',
-        "DOWNLOAD_TIMEOUT": '25',
-        "DOWNLOAD_DELAY": '1',
-    }
+    custom_settings = xzgxf_custom_settings
 
     search_url = 'http://zxgk.court.gov.cn/xgl/searchXgl.do'  # 搜索链接
     # redis 搜索关键词
