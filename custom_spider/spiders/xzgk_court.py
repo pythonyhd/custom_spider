@@ -55,7 +55,7 @@ class XzgkCourtSpider(scrapy.Spider):
         "RETRY_ENABLED": True,
         "RETRY_TIMES": '9',
         "DOWNLOAD_TIMEOUT": '25',
-        # "DOWNLOAD_DELAY": '1',
+        "DOWNLOAD_DELAY": '1',
     }
 
     search_url = 'http://zxgk.court.gov.cn/xgl/searchXgl.do'  # 搜索链接
@@ -269,7 +269,6 @@ class XzgkCourtSpider(scrapy.Spider):
             logger.error(f"PDF解析出错--直接返回item:{repr(e)}")
             content_list = []
             yield item
-
 
     def get_uuid(self):
         """ 获取验证码uuid参数 """
