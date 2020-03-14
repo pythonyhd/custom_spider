@@ -34,9 +34,11 @@ def mysql_keyword_redis():
             # 失信被执行人
             # redis_client.lpush('promise_crawler:keywords', keyword[0])
             # 被执行人
-            redis_client.lpush('execute_crawler:keywords', keyword[0])
+            # redis_client.lpush('execute_crawler:keywords', keyword[0])
             # 限制高消费
             # redis_client.lpush('consumption_crawler:keywords', keyword[0])
+            # 中华全国工商业联合会-失信被执行人
+            redis_client.lpush('acfic_crawler:keywords', keyword[0])
             print('插入第{}条'.format(num))
     except Exception as e:
         mysql_client.rollback()
