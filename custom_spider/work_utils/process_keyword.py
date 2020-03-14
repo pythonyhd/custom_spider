@@ -18,7 +18,7 @@ mysql_client = pymysql.connect(host=MYSQL_HOST, port=MYSQL_PORT, user=MYSQL_USER
 redis_client = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PWD, db=REDIS_DB)
 
 
-def mysql_redis_keyword():
+def mysql_keyword_redis():
     """ 中国执行信息公开网-搜索关键词 """
     num = 0
     cursor = mysql_client.cursor()
@@ -31,20 +31,21 @@ def mysql_redis_keyword():
         keywords = cursor.fetchall()
         for keyword in keywords:
             num += 1
-            # print(keyword[0])
-            # 限制高消费
-            # redis_client.lpush('xzgk_court:keywords', keyword[0])
             # 失信被执行人
-            redis_client.lpush('shixin_court:keywords', keyword[0])
+            # redis_client.lpush('promise_crawler:keywords', keyword[0])
+            # 被执行人
+            redis_client.lpush('execute_crawler:keywords', keyword[0])
+            # 限制高消费
+            # redis_client.lpush('consumption_crawler:keywords', keyword[0])
             print('插入第{}条'.format(num))
     except Exception as e:
         mysql_client.rollback()
         print('出错:{}'.format(repr(e)))
-        mysql_redis_keyword()
+        mysql_keyword_redis()
     finally:
         cursor.close()
         mysql_client.close()
 
 
 if __name__ == '__main__':
-    mysql_redis_keyword()
+    mysql_keyword_redis()
